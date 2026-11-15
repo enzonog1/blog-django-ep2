@@ -1,10 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 
 from .forms import CommentForm, PostForm
-from .models import Comment, Post
+from .models import Category, Comment, Post
 
 
 # Versão 3: classes genéricas (ListView, DetailView, CreateView, UpdateView, DeleteView).
@@ -61,3 +61,16 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse('post_detail', kwargs={'pk': self.post_obj.pk})
+
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'blog/category_list.html'
+    context_object_name = 'categories'
+
+
+def category_detail(request, pk):
+    category = get_object_or_404(Category, pk=pk)  # 404 se a categoria não existir
+    posts = category.posts.order_by('-posted_at')
+    # Reaproveita o template de listagem de posts, que mostra o nome da categoria.
+    return render(request, 'blog/post_list.html', {'posts': posts, 'category': category})

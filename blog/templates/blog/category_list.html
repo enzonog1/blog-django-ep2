@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Categorias{% endblock %}
+{% block content %}
+<h1>Categorias</h1>
+{% if categories %}
+<ul>
+  {% for category in categories %}
+  <li>
+    <a href="{% url 'category_detail' category.pk %}">{{ category.name }}</a>
+    {% if category.description %}<br><small>{{ category.description }}</small>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Nenhuma categoria cadastrada. Crie pelo administrador (/admin/).</p>
+{% endif %}
+{% endblock %}

@@ -24,6 +24,15 @@
     <nav>
       <a href="{% url 'post_list' %}">Posts</a>
       <a href="{% url 'post_create' %}">Novo post</a>
+      {% if user.is_authenticated %}
+        <span>Olá, {{ user.username }}</span>
+        <form class="inline" method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Sair</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Entrar</a>
+      {% endif %}
     </nav>
   </header>
   <main>

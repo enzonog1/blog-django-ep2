@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Novo comentário{% endblock %}
+{% block content %}
+<h1>Novo comentário</h1>
+<p>No post: <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></p>
+<p class="meta">Comentando como <strong>{{ user.username }}</strong></p>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Comentar</button>
+  <a href="{% url 'post_detail' post.pk %}">Cancelar</a>
+</form>
+{% endblock %}

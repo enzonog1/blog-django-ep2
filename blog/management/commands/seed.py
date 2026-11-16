@@ -1,110 +1,103 @@
 from datetime import timedelta
-
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-
 from blog.models import Category, Comment, Post
 
-SENHA_PADRAO = 'senha12345'
-
-POSTS = [
-    {
-        'title': 'Primeiros passos com Django',
-        'days_ago': 6,
-        'categories': ['Tecnologia', 'Estudos'],
-        'content': (
-            '<p>O <strong>Django</strong> é um framework web em Python que já vem com '
-            'administrador, ORM e sistema de templates.</p>'
-            '<h2>O que eu aprendi até agora</h2>'
-            '<ul>'
-            '<li>Modelos descrevem as tabelas do banco de dados.</li>'
-            '<li>Views recebem a requisição e devolvem uma resposta.</li>'
-            '<li>Templates montam o HTML que o usuário vê.</li>'
-            '</ul>'
-        ),
-        'comments': [
-            ('maria', 'Ótimo resumo! O admin do Django economiza muito tempo.', 5),
-            ('joao', 'Faltou falar das migrações, mas gostei da explicação.', 4),
-            ('maria', 'Vou tentar reproduzir esse exemplo no meu computador.', 3),
-        ],
-    },
-    {
-        'title': 'Como organizo minhas semanas de prova',
-        'days_ago': 3,
-        'categories': ['Estudos', 'Cotidiano'],
-        'content': (
-            '<p>Em semana de prova, eu divido o tempo em blocos curtos e alterno '
-            'as matérias.</p>'
-            '<ol>'
-            '<li>Resolvo exercícios primeiro.</li>'
-            '<li>Releio o resumo só no final.</li>'
-            '<li>Durmo bem na véspera.</li>'
-            '</ol>'
-        ),
-        'comments': [
-            ('joao', 'Resolver exercícios antes de reler o resumo funciona mesmo.', 2),
-            ('maria', 'Vou adotar esse esquema na próxima prova.', 1),
-        ],
-    },
-    {
-        'title': 'Café, carona e correria: o dia a dia na faculdade',
-        'days_ago': 1,
-        'categories': ['Cotidiano'],
-        'content': (
-            '<p>Um post leve sobre o dia a dia no campus: aulas de manhã, '
-            'laboratório à tarde e muito café no meio do caminho.</p>'
-        ),
-        'comments': [],  # este post fica sem comentários de propósito
-    },
-]
-
-CATEGORIAS = [
-    ('Tecnologia', 'Posts sobre programação, ferramentas e tecnologia.'),
-    ('Estudos', 'Dicas e anotações sobre os estudos.'),
-    ('Cotidiano', 'Histórias do dia a dia.'),
-]
+User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Popula o banco com usuários, categorias, posts e comentários de exemplo.'
+    help = 'Popula o banco de dados com o tema Trailer Mágico do Titio Avô.'
 
     def handle(self, *args, **options):
-        User = get_user_model()
-        users = {}
-        for username in ('maria', 'joao'):
-            user, created = User.objects.get_or_create(username=username)
-            if created:
-                user.set_password(SENHA_PADRAO)
-                user.save()
-            users[username] = user
+        maria, _ = User.objects.get_or_create(username='maria', defaults={'email': 'maria@example.com'})
+        maria.set_password('senha12345')
+        maria.save()
 
-        categories = {}
-        for name, description in CATEGORIAS:
-            categories[name], _ = Category.objects.get_or_create(
-                name=name, defaults={'description': description}
-            )
+        joao, _ = User.objects.get_or_create(username='joao', defaults={'email': 'joao@example.com'})
+        joao.set_password('senha12345')
+        joao.save()
 
-        now = timezone.now()
-        for data in POSTS:
-            post, created = Post.objects.get_or_create(
-                title=data['title'],
-                defaults={
-                    'content': data['content'],
-                    'posted_at': now - timedelta(days=data['days_ago']),
-                },
-            )
-            post.categories.add(*[categories[n] for n in data['categories']])
-            if not post.comments.exists():
-                for username, text, hours_ago in data['comments']:
-                    Comment.objects.create(
-                        post=post,
-                        author=users[username],
-                        text=text,
-                        posted_at=now - timedelta(hours=hours_ago * 8),
-                    )
+        cat_trailer, _ = Category.objects.get_or_create(
+            name='Trailer Mágico',
+            defaults={'description': 'Aventuras pelo espaço-tempo a bordo do Trailer Mágico.'},
+        )
+        cat_turma, _ = Category.objects.get_or_create(
+            name='Turma do Trailer',
+            defaults={'description': 'Perfis dos moradores e aliados do Titio Avô.'},
+        )
+        cat_missoes, _ = Category.objects.get_or_create(
+            name='Missões',
+            defaults={'description': 'Registros das missões e confusões resolvidas.'},
+        )
 
-        self.stdout.write(self.style.SUCCESS(
-            f'Banco populado: {Post.objects.count()} posts, '
-            f'{Comment.objects.count()} comentários, {Category.objects.count()} categorias.'
-        ))
+        agora = timezone.now()
+
+        p1, _ = Post.objects.get_or_create(
+            title='Pochetio: O Fiel Escudeiro Mágico',
+            defaults={
+                'content': (
+                    '<p>O <strong>Pochetio</strong> é o fiel escudeiro mágico que vive na cintura do Titio Avô. '
+                    'Apesar do seu tamanho compacto, seu interior funciona como uma dimensão paralela infinita '
+                    'de onde ele consegue retirar qualquer objeto imaginável — de martelos e robôs gigantes a sorvete.</p>'
+                ),
+            },
+        )
+        Post.objects.filter(pk=p1.pk).update(posted_at=agora - timedelta(days=5))
+        p1.categories.set([cat_trailer, cat_turma])
+
+        p2, _ = Post.objects.get_or_create(
+            title='Sr. Gus: A Voz da Razão Jurássica',
+            defaults={
+                'content': (
+                    '<p>O <strong>Sr. Gus</strong> é um dinossauro jurássico de mais de 100 milhões de anos que atua como '
+                    'a voz da razão da equipe. Calmo, sarcástico e fã de musculação e livros, ele passa metade do tempo '
+                    'tentando manter a ordem no trailer e a outra metade salvando o Titio Avô de suas próprias ideias.</p>'
+                ),
+            },
+        )
+        Post.objects.filter(pk=p2.pk).update(posted_at=agora - timedelta(days=2))
+        p2.categories.set([cat_turma, cat_missoes])
+
+        p3, _ = Post.objects.get_or_create(
+            title='Steve Pizza: A Fatia Mais Maneira do Universo',
+            defaults={
+                'content': (
+                    '<p>O <strong>Steve Pizza</strong> é uma fatia de pizza de pepperoni ultra estilosa, usuária de '
+                    'óculos escuros e convencida de ser a criatura mais "maneira" do universo. Ele adora ostentar '
+                    'sua popularidade e inventar bordões radicais.</p>'
+                ),
+            },
+        )
+        Post.objects.filter(pk=p3.pk).update(posted_at=agora - timedelta(hours=6))
+        p3.categories.set([cat_turma])
+
+        Comment.objects.get_or_create(
+            post=p1,
+            author=maria,
+            text='O Pochetio sempre tira a ferramenta certa na hora do aperto!',
+        )
+        Comment.objects.get_or_create(
+            post=p1,
+            author=joao,
+            text='A dimensão paralela dentro dele salva todas as missões do trailer.',
+        )
+        Comment.objects.get_or_create(
+            post=p1,
+            author=maria,
+            text='Melhor companheiro de viagem pelo espaço-tempo!',
+        )
+
+        Comment.objects.get_or_create(
+            post=p2,
+            author=joao,
+            text='O Sr. Gus é o único que mantém a calma quando o plano foge do controle.',
+        )
+        Comment.objects.get_or_create(
+            post=p2,
+            author=maria,
+            text='Fã de musculação, livros e paciência infinita com o Steve Pizza.',
+        )
+
+        self.stdout.write(self.style.SUCCESS('Banco populado com o tema Trailer Mágico do Titio Avô!'))

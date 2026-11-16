@@ -1,9 +1,7 @@
--- Consultas da seção 4. Abra o db.sqlite3 no DB Browser for SQLite
--- (aba "Executar SQL") e rode uma de cada vez.
--- Ajuste o id/nome usado no WHERE se os seus dados forem diferentes.
+
 
 -- Query 1: Todos os posts, do mais recente para o mais antigo
-SELECT *
+SELECT id, title, posted_at, content
 FROM blog_post
 ORDER BY posted_at DESC;
 
@@ -25,7 +23,7 @@ SELECT c.id AS category_id, c.name, c.description,
 FROM blog_category AS c
 JOIN blog_post_categories AS pc ON pc.category_id = c.id
 JOIN blog_post AS p ON p.id = pc.post_id
-WHERE c.name = 'Estudos';
+WHERE c.name = 'Trailer Mágico';
 
 -- Query 5: Categorias que possuem dois ou mais posts
 SELECT c.id, c.name, c.description, COUNT(pc.post_id) AS total_posts

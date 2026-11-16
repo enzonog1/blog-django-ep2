@@ -26,6 +26,9 @@
       font-weight: bold;
       color: #222222;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
     nav {
       display: flex;
@@ -114,7 +117,10 @@
 </head>
 <body>
   <header>
-    <a class="brand" href="{% url 'post_list' %}">Portfólio do Titio Avô</a>
+    <a class="brand" href="{% url 'post_list' %}">
+      <img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/titio-avo_2.png" alt="Titio Avô" style="height:48px; width:auto;">
+      <span>Portfólio do Titio Avô</span>
+    </a>
     <nav>
       <a href="{% url 'post_list' %}">Posts</a>
       <a href="{% url 'post_create' %}">Novo post</a>

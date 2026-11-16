@@ -38,6 +38,8 @@ class Command(BaseCommand):
             title='Pochetio: O Fiel Escudeiro Mágico',
             defaults={
                 'content': (
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/pochetio_2.png" alt="Pochetio" '
+                    'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Pochetio</strong> é o fiel escudeiro mágico que vive na cintura do Titio Avô. '
                     'Apesar do seu tamanho compacto, seu interior funciona como uma dimensão paralela infinita '
                     'de onde ele consegue retirar qualquer objeto imaginável — de martelos e robôs gigantes a sorvete.</p>'
@@ -51,6 +53,8 @@ class Command(BaseCommand):
             title='Sr. Gus: A Voz da Razão Jurássica',
             defaults={
                 'content': (
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/sr-gus.png" alt="Sr. Gus" '
+                    'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Sr. Gus</strong> é um dinossauro jurássico de mais de 100 milhões de anos que atua como '
                     'a voz da razão da equipe. Calmo, sarcástico e fã de musculação e livros, ele passa metade do tempo '
                     'tentando manter a ordem no trailer e a outra metade salvando o Titio Avô de suas próprias ideias.</p>'
@@ -64,6 +68,8 @@ class Command(BaseCommand):
             title='Steve Pizza: A Fatia Mais Maneira do Universo',
             defaults={
                 'content': (
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/steve-pizza.png" alt="Steve Pizza" '
+                    'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Steve Pizza</strong> é uma fatia de pizza de pepperoni ultra estilosa, usuária de '
                     'óculos escuros e convencida de ser a criatura mais "maneira" do universo. Ele adora ostentar '
                     'sua popularidade e inventar bordões radicais.</p>'

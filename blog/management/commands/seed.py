@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Popula o banco de dados com o tema Trailer Mágico do Titio Avô.'
+    help = 'Popula e atualiza o banco de dados com o tema Trailer Mágico do Titio Avô.'
 
     def handle(self, *args, **options):
         maria, _ = User.objects.get_or_create(username='maria', defaults={'email': 'maria@example.com'})
@@ -34,76 +34,62 @@ class Command(BaseCommand):
 
         agora = timezone.now()
 
-        p1, _ = Post.objects.get_or_create(
+        # Post 1: Pochetio
+        p1, _ = Post.objects.update_or_create(
             title='Pochetio: O Fiel Escudeiro Mágico',
             defaults={
                 'content': (
-                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/pochetio.png" alt="Pochetio" style="max-height:180px; display:block; margin:0 auto 15px auto;">'
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/pochetio.png" alt="Pochetio" '
                     'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Pochetio</strong> é o fiel escudeiro mágico que vive na cintura do Titio Avô. '
                     'Apesar do seu tamanho compacto, seu interior funciona como uma dimensão paralela infinita '
                     'de onde ele consegue retirar qualquer objeto imaginável — de martelos e robôs gigantes a sorvete.</p>'
                 ),
+                'posted_at': agora - timedelta(days=5),
             },
         )
-        Post.objects.filter(pk=p1.pk).update(posted_at=agora - timedelta(days=5))
         p1.categories.set([cat_trailer, cat_turma])
 
-        p2, _ = Post.objects.get_or_create(
+        # Post 2: Sr. Gus
+        p2, _ = Post.objects.update_or_create(
             title='Sr. Gus: A Voz da Razão Jurássica',
             defaults={
                 'content': (
-                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/sr-gus.png" alt="Sr. Gus" style="max-height:180px; display:block; margin:0 auto 15px auto;">'
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/sr-gus.png" alt="Sr. Gus" '
                     'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Sr. Gus</strong> é um dinossauro jurássico de mais de 100 milhões de anos que atua como '
                     'a voz da razão da equipe. Calmo, sarcástico e fã de musculação e livros, ele passa metade do tempo '
                     'tentando manter a ordem no trailer e a outra metade salvando o Titio Avô de suas próprias ideias.</p>'
                 ),
+                'posted_at': agora - timedelta(days=2),
             },
         )
-        Post.objects.filter(pk=p2.pk).update(posted_at=agora - timedelta(days=2))
         p2.categories.set([cat_turma, cat_missoes])
 
-        p3, _ = Post.objects.get_or_create(
+        # Post 3: Steve Pizza
+        p3, _ = Post.objects.update_or_create(
             title='Steve Pizza: A Fatia Mais Maneira do Universo',
             defaults={
                 'content': (
-                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/steve-pizza.png" alt="Steve Pizza" style="max-height:180px; display:block; margin:0 auto 15px auto;">'
+                    '<img src="https://raw.githubusercontent.com/enzonog1/blog-django-ep2/main/static/images/steve-pizza.png" alt="Steve Pizza" '
                     'style="max-height:180px; display:block; margin:0 auto 15px auto;">'
                     '<p>O <strong>Steve Pizza</strong> é uma fatia de pizza de pepperoni ultra estilosa, usuária de '
                     'óculos escuros e convencida de ser a criatura mais "maneira" do universo. Ele adora ostentar '
                     'sua popularidade e inventar bordões radicais.</p>'
                 ),
+                'posted_at': agora - timedelta(hours=6),
             },
         )
-        Post.objects.filter(pk=p3.pk).update(posted_at=agora - timedelta(hours=6))
         p3.categories.set([cat_turma])
 
-        Comment.objects.get_or_create(
-            post=p1,
-            author=maria,
-            text='O Pochetio sempre tira a ferramenta certa na hora do aperto!',
-        )
-        Comment.objects.get_or_create(
-            post=p1,
-            author=joao,
-            text='A dimensão paralela dentro dele salva todas as missões do trailer.',
-        )
-        Comment.objects.get_or_create(
-            post=p1,
-            author=maria,
-            text='Melhor companheiro de viagem pelo espaço-tempo!',
-        )
+        # Comentários
+        if not Comment.objects.filter(post=p1).exists():
+            Comment.objects.create(post=p1, author=maria, text='O Pochetio sempre tira a ferramenta certa na hora do aperto!')
+            Comment.objects.create(post=p1, author=joao, text='A dimensão paralela dentro dele salva todas as missões do trailer.')
+            Comment.objects.create(post=p1, author=maria, text='Melhor companheiro de viagem pelo espaço-tempo!')
 
-        Comment.objects.get_or_create(
-            post=p2,
-            author=joao,
-            text='O Sr. Gus é o único que mantém a calma quando o plano foge do controle.',
-        )
-        Comment.objects.get_or_create(
-            post=p2,
-            author=maria,
-            text='Fã de musculação, livros e paciência infinita com o Steve Pizza.',
-        )
+        if not Comment.objects.filter(post=p2).exists():
+            Comment.objects.create(post=p2, author=joao, text='O Sr. Gus é o único que mantém a calma quando o plano foge do controle.')
+            Comment.objects.create(post=p2, author=maria, text='Fã de musculação, livros e paciência infinita com o Steve Pizza.')
 
-        self.stdout.write(self.style.SUCCESS('Banco populado com o tema Trailer Mágico do Titio Avô!'))
+        self.stdout.write(self.style.SUCCESS('Banco atualizado com sucesso com as imagens do Titio Avô!'))
